@@ -1,3 +1,3 @@
-This script enables up to '@max_enabled_outputs' connected display outputs from '@enabled_outputs' and then it positions them using the rule defined in '@position', using xrandr.
+This script enables up to '@max_enabled_outputs' connected display outputs from '@enabled_outputs' and then it positions them according to the rule defined in '@position', using xrandr.
 
 I'm using the default configuration on a laptop with Intel graphics. If both my external monitors are connected, it will disable the laptop's screen and enable both external outputs, with the VGA output on the right of the HDMI output. If a single external monitor is connected, it will turn on the internal display and the connected external output. If no external display is connected, only the internal display will be enabled.
