@@ -5,24 +5,22 @@
 @position = '--right-of'
 
 # A connected output looks like this 'HDMI1 connected[...]'
-def get_connected_outputs
+def get_connected_outputs(xrandr_output)
   outputs = []
 
-  xrandr_output = `xrandr | grep " connected"`
   xrandr_output.each_line do |line|
-    outputs.push line.split(' ')[0]
+    outputs.push line.split(' ')[0] if line.match(' connected')
   end
   
   return outputs
 end
 
 # An enabled output looks like this 'HDMI1 (dis)connected 1920x1080+0+0[...]'
-def get_enabled_outputs
+def get_enabled_outputs(xrandr_output)
   outputs = []
 
-  xrandr_output = `xrandr |grep 'connected [0-9]'`
   xrandr_output.each_line do |line|
-    outputs.push line.split(' ')[0]
+    outputs.push line.split(' ')[0] if line.match(/connected [0-9]/)
   end
   
   return outputs
@@ -36,10 +34,12 @@ def enable_output(name)
   `xrandr --output #{name} --auto`
 end
 
-connected_outputs = get_connected_outputs()
-enabled_outputs = get_enabled_outputs()
+xrandr = `xrandr`
 
-outputs_to_disable = enabled_outputs
+connected_outputs = get_connected_outputs(xrandr)
+enabled_outputs = get_enabled_outputs(xrandr)
+
+outputs_to_disable = Array.new(enabled_outputs)
 outputs_to_enable = []
 
 @enabled_outputs.each do |output|
@@ -49,9 +49,12 @@ outputs_to_enable = []
   end
 end
 
-outputs_to_disable.map { |output| disable_output(output)}
-outputs_to_enable.map { |output| enable_output(output)}
+outputs_to_disable.map { |output| disable_output(output) }
+
+outputs_to_enable -= enabled_outputs
+outputs_to_enable.map { |output| enable_output(output) }
 
 for i in 1..(outputs_to_enable.size - 1)
   `xrandr --output #{outputs_to_enable[i]} #{@position} #{outputs_to_enable[i-1]}`
 end
+
