@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-@enabled_outputs = ["HDMI1", "VGA1", "LVDS1"]
+@enabled_outputs = ["HDMI2", "HDMI3", "HDMI1", "VGA1", "LVDS1"]
 @max_enabled_outputs = 2
 @position = '--right-of'
 
@@ -20,7 +20,7 @@ def get_enabled_outputs(xrandr_output)
   outputs = []
 
   xrandr_output.each_line do |line|
-    outputs.push line.split(' ')[0] if line.match(/connected [0-9]/)
+    outputs.push line.split(' ')[0] if line.match(/connected (primary )?[0-9]/)
   end
   
   return outputs
