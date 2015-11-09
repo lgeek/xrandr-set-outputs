@@ -22,8 +22,13 @@ def get_enabled_outputs(xrandr_output)
   xrandr_output.each_line do |line|
     outputs.push line.split(' ')[0] if line.match(/connected (primary )?[0-9]/)
   end
-  
-  return outputs
+
+  sorted_outputs = []
+  for i in 0..(@enabled_outputs.size - 1)
+    sorted_outputs.push(@enabled_outputs[i]) if outputs.include?(@enabled_outputs[i])
+  end
+
+  return sorted_outputs
 end
 
 def disable_output(name)
@@ -54,7 +59,7 @@ outputs_to_disable.map { |output| disable_output(output) }
 outputs_to_enable -= enabled_outputs
 outputs_to_enable.map { |output| enable_output(output) }
 
-for i in 1..(outputs_to_enable.size - 1)
-  `xrandr --output #{outputs_to_enable[i]} #{@position} #{outputs_to_enable[i-1]}`
+for i in 1..(enabled_outputs.size - 1)
+  `xrandr --output #{enabled_outputs[i]} #{@position} #{enabled_outputs[i-1]}`
 end
 
